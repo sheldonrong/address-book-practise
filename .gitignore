@@ -1,0 +1,8 @@
+.hot-update.json
+.hot-update.js
+.hot-update.js.map
+.js.map
+**/.idea
+**/.vscode
+**/__pycache__
+/tmp
