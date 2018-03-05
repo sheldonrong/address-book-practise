@@ -18,7 +18,8 @@ Simply run `npm run watch`. Note at the moment, the hot patches are generated al
 * `Semantic UI - React Components`
 * `Dropzone - React Component`
 
-Due to limited time, I did not use `Redux` nor `RxJS`. Ideally both libraries are needed for enterprise level front-end applications. But this is just a demo.
+Due to limited time, I did not use `Redux` nor `RxJS`. Ideally both libraries are needed for enterprise level front-end applications.
+And also because of this, I did not write any Jest unit tests for the front end.
 
 ### Authors
 Sheldon Rong
