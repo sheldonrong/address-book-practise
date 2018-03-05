@@ -15,6 +15,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from constants import ConflictsResolveStrategy
 from address_book.exceptions import CannotDetermineCSVMappingError, FileInfoNotCompleteError, InvalidEmailAddress
+from utils import decode_unique_filename
 
 db = SQLAlchemy()
 
@@ -27,7 +28,7 @@ class CSVHandler(object):
 
     def __init__(self, filepath, has_header=None, delimiter=None, quotechar=None, encoding='utf-8'):
         self.has_header = has_header
-        self.filepath = filepath
+        self.filepath = decode_unique_filename(filepath)
         self.delimiter = delimiter
         self.quotechar = quotechar
         self.encoding = encoding

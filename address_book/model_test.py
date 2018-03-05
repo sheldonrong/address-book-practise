@@ -62,7 +62,7 @@ class TestCSVHandler(object):
             acd acd@yahoo.com
             def def@outlook.com"""
         )
-        handler = CSVHandler(filepath='./')
+        handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=')
         reader, has_header = handler._get_reader(f)
         assert_false(has_header)
         assert_equal(reader.dialect.delimiter, ' ')
@@ -76,7 +76,7 @@ class TestCSVHandler(object):
             acd;acd@yahoo.com
             def;def@outlook.com"""
         )
-        handler = CSVHandler(filepath='./', has_header=True)
+        handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', has_header=True)
         reader, has_header = handler._get_reader(f)
         assert_true(has_header)
         assert_equal(reader.dialect.delimiter, ';')
@@ -90,7 +90,7 @@ class TestCSVHandler(object):
             acd;acd@yahoo.com
             def;def@outlook.com"""
         )
-        handler = CSVHandler(filepath='./', has_header=True)
+        handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', has_header=True)
         handler._get_data_from_file(f)
 
         assert_equal(len(handler.data), 3)
@@ -106,7 +106,7 @@ class TestCSVHandler(object):
             acd,acd@yahoo.com
             def,def@outlook.com"""
         )
-        handler = CSVHandler(filepath='./', has_header=False)
+        handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', has_header=False)
         handler._get_data_from_file(f)
 
         assert_equal(len(handler.data), 3)
@@ -118,30 +118,30 @@ class TestCSVHandler(object):
     def test__validate_file_info(self):
         """if any of the metadata is set to None, exceptions will be raised"""
         with assert_raises(FileInfoNotCompleteError) as ex:
-            handler = CSVHandler(filepath='./')
+            handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=')
             handler._validate_file_info()
             assert_equal(ex.exception.args[0], 'Quote char information not specified.')
 
         with assert_raises(FileInfoNotCompleteError) as ex:
-            handler = CSVHandler(filepath='./', quotechar='./')
+            handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', quotechar='./')
             handler._validate_file_info()
             assert_equal(ex.exception.args[0], 'Has header information not specified.')
 
         with assert_raises(FileInfoNotCompleteError) as ex:
-            handler = CSVHandler(filepath='./', quotechar='./', has_header=True)
+            handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', quotechar='./', has_header=True)
             handler._validate_file_info()
             assert_equal(ex.exception.args[0], 'Delimiter information not specified.')
 
         with assert_raises(FileInfoNotCompleteError) as ex:
             handler = CSVHandler(
-                filepath='./', quotechar='./', has_header=True,
+                filepath='dG1wNGsyY3o5MjU=', quotechar='./', has_header=True,
                 delimiter=' ', encoding=None
             )
             handler._validate_file_info()
             assert_equal(ex.exception.args[0], 'Encoding information not specified.')
 
     def test_get_data(self):
-        handler = CSVHandler(filepath='./')
+        handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=')
         with patch.object(handler, '_validate_file_info') as _validate_file_info:
             with patch.object(handler, '_get_data_from_file') as _get_data_from_file:
                 with patch('builtins.open', mock_open()) as f:
@@ -156,7 +156,7 @@ class TestCSVHandler(object):
         with patch(
                 'builtins.open',
                 mock_open(read_data=b'name email\nabc abc@aa.com')):
-            handler = CSVHandler(filepath='./', encoding=None)
+            handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', encoding=None)
             handler._guess_encoding()
             # Verify
             assert_equal(handler.encoding, 'ascii')
@@ -165,7 +165,7 @@ class TestCSVHandler(object):
         with patch(
                 'builtins.open',
                 mock_open(read_data=b'name email\nabc abc@aa.com')):
-            handler = CSVHandler(filepath='./', encoding='cp1230')
+            handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', encoding='cp1230')
             handler._guess_encoding()
             # Verify, used provided encoding rather than the guessed one
             assert_equal(handler.encoding, 'cp1230')
@@ -173,7 +173,7 @@ class TestCSVHandler(object):
     @patch('address_book.model.CSVHandler._guess_encoding')
     def test_get_info(self, _guess_encoding):
         _guess_encoding.return_value = None
-        handler = CSVHandler(filepath='./', encoding='utf-8')
+        handler = CSVHandler(filepath='dG1wNGsyY3o5MjU=', encoding='utf-8')
         with patch('builtins.open', mock_open(read_data='email name\nabc abc@aa.com\n')):
             info = handler.get_info()
             assert_equal(info, {

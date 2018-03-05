@@ -130,7 +130,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                     this.setState({
                         ...this.state,
                         uploadedFile: result.body.file,
-                    },            this.getFileInfo);
+                    }, this.getFileInfo);
                 }
             });
         }

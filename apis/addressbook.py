@@ -82,7 +82,7 @@ class AddressBookBulkImport(Resource):
         metadata = params['metadata']
         try:
             handler = CSVHandler(
-                get_config().get_tmp_path(params['file_hash']),
+                params['file_hash'],
                 has_header=metadata['has_header'],
                 delimiter=metadata['delimiter'],
                 quotechar=metadata['quotechar'],

@@ -15,12 +15,11 @@ class TestUtils(object):
         # Execute
         filename = get_unique_filename('abc.txt')
         origin_filename = base64.b64decode(filename)\
-            .decode('utf-8').split('|')
+            .decode('utf-8')
 
         # Verify
-        assert_equal(len(origin_filename), 2)
-        assert_equal(origin_filename[0], str(11111122222))
-        assert_equal(origin_filename[1], 'abc.txt')
+        assert_equal(len(origin_filename), 7)
+        assert_equal(origin_filename, 'abc.txt')
 
     def allowed_file(self):
         # Valid cases

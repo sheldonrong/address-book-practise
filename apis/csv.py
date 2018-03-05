@@ -41,7 +41,7 @@ class CSV(Resource):
         params = self.csv_params.parse_args()
         try:
             handler = CSVHandler(
-                get_config().get_tmp_path(file_hash),
+                file_hash,
                 has_header=params.get('has_header', None),
                 delimiter=params.get('delimiter', None),
                 quotechar=params.get('quotechar', None),
