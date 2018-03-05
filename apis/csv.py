@@ -7,7 +7,7 @@ from address_book.model import CSVHandler
 from address_book.exceptions import CannotDetermineCSVMappingError
 from apis.addressbook import AddressBookList
 from apis.utils import get_csv_metadata_fields, get_csv_metadata_params
-
+from config import get_config
 
 api = Namespace(
     'csv',
@@ -40,12 +40,8 @@ class CSV(Resource):
         """
         params = self.csv_params.parse_args()
         try:
-            handler = CSVHandler(os.path.join(
-                os.path.dirname(__file__),
-                '../',
-                app.config['UPLOAD_FOLDER'],
-                file_hash,
-            ),
+            handler = CSVHandler(
+                get_config().get_tmp_path(file_hash),
                 has_header=params.get('has_header', None),
                 delimiter=params.get('delimiter', None),
                 quotechar=params.get('quotechar', None),

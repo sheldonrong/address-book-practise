@@ -11,6 +11,7 @@ from apis.utils import (
     get_csv_metadata_fields,
     get_pagination_params
 )
+from config import get_config
 
 api = Namespace(
     'address-books',
@@ -80,12 +81,8 @@ class AddressBookBulkImport(Resource):
         params = request.get_json()
         metadata = params['metadata']
         try:
-            handler = CSVHandler(os.path.join(
-                os.path.dirname(__file__),
-                '../',
-                app.config['UPLOAD_FOLDER'],
-                params['file_hash'],
-            ),
+            handler = CSVHandler(
+                get_config().get_tmp_path(params['file_hash']),
                 has_header=metadata['has_header'],
                 delimiter=metadata['delimiter'],
                 quotechar=metadata['quotechar'],
