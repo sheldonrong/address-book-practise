@@ -2,6 +2,9 @@ runtime: python
 api_version: 1
 threadsafe: true
 env: flex
+instance_class: B2
+manual_scaling:
+  instances: 1
 
 runtime_config:
     python_version: 3
