@@ -6,6 +6,13 @@ env: flex
 runtime_config:
     python_version: 3
 
+env_variables:
+    SQLALCHEMY_DATABASE_URI: >-
+      postgresql+psycopg2://postgres:123456@/addressbook?host=/cloudsql/address-book-196923:australia-southeast1:address-book-postgresql
+
+beta_settings:
+    cloud_sql_instances: address-book-196923:australia-southeast1:address-book-postgresql
+
 handlers:
 - url: /static
   static_dir: frontend/build/static

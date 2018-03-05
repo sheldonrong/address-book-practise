@@ -28,14 +28,14 @@ class ProdConfig(Config):
 
 def setup_app(app, config):
     # init database integration
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI'] or 'postgresql://%(user)s:\
 %(pw)s@%(host)s:%(port)s/%(db)s' % config.POSTGRES
 
     db.init_app(app)
 
     # other settings
     app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     return app
 
