@@ -49,7 +49,9 @@ class TestSearchCriteria(object):
         assert_equal(str(address_book.order_by.call_args[0][0]), 'name DESC')
 
     def test__build_pagination_default(self):
-        sc = SearchCriteria(db, {})
+        sc = SearchCriteria(db, {
+
+        })
         address_book = MagicMock()
         sc._build_pagination(address_book)
         assert_equal(str(address_book.limit.call_args[0][0]), '50')
