@@ -4,6 +4,13 @@ For setting up front end of this demo, please check the [\[Front End Readme\]](.
 
 Flask application with Open API (Swagger) standard compatible RESTful API.
 
+### Demo
+
+This application has been deployed to Google App Engine at:
+`https://address-book-196923.appspot.com/`
+
+I have to say `gcloud app deploy` takes quite a mount of time to finish. I will prefer IaaS over PasS :)
+
 ### Installing
 
 It's Python, no need for installation!
