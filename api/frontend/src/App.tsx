@@ -6,7 +6,25 @@ import 'semantic-ui/dist/semantic.css';
 
 import './App.css';
 
-export class App extends React.Component {
+type AppState = {
+  key: number
+};
+
+export class App extends React.Component<{}, AppState> {
+
+  constructor(props: any) {
+    super(props);
+    this.state = {
+        key: 1
+    };
+  }
+
+  reMount = () => {
+    this.setState({
+      ...this.state,
+      key: this.state.key + 1
+    });
+  }
 
   render() {
     return (
@@ -15,10 +33,10 @@ export class App extends React.Component {
           <h1 className="App-title">Address Book Manager</h1>
         </header>
         <div>
-          <Upload />
+          <Upload onUploadComplete={this.reMount}/>
         </div>
         <Container>
-          <CsvTableComponent />
+          <CsvTableComponent key={`csv-table-${this.state.key}`} />
         </Container>
       </div>
     );

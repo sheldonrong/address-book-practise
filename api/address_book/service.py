@@ -9,6 +9,10 @@ class AddressBookService(object):
         return AddressBook.search(keyword, page, page_size)
 
     @staticmethod
+    def get_total_pages(page_size):
+        return AddressBook.get_total_pages(page_size)
+
+    @staticmethod
     def import_data(csv_handler, resolve_conflicts=ConflictsResolveStrategy.KEEP_EXISTING):
         data = csv_handler.get_data()
         if data:

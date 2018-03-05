@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import csv
+from math import ceil
+
 import chardet
 import itertools
 import re
@@ -8,7 +10,7 @@ import re
 from flask_sqlalchemy import SQLAlchemy
 from flask import current_app as app
 
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, func
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from constants import ConflictsResolveStrategy
@@ -182,6 +184,10 @@ class AddressBook(db.Model):
         return AddressBook.query.filter(AddressBook.id == id)
 
     @staticmethod
+    def get_total_pages(page_size):
+        return ceil(db.session.execute(func.count(AddressBook.id)).scalar() / page_size)
+
+    @staticmethod
     def search(keyword=None, page=None, page_size=None):
         from address_book.search_criteria import SearchCriteria
         return SearchCriteria(db, {
@@ -198,10 +204,10 @@ class AddressBook(db.Model):
                 insert_sql = pg_insert(table).values(name=row.name, email=row.email)
                 if on_duplicate == ConflictsResolveStrategy.KEEP_EXISTING:
                     insert_sql = insert_sql.on_conflict_do_nothing(index_elements=[table.c.email])
-                elif on_duplicate == ConflictsResolveStrategy.USE_NEW:
+                elif on_duplicate == ConflictsResolveStrategy.REPLACE_WITH_NEW:
                     insert_sql = insert_sql.on_conflict_do_update(
                         index_elements=[table.c.email],
-                        set_={'email': row.email}
+                        set_={'name': row.name}
                     )
                 db.session.execute(insert_sql)
             except InvalidEmailAddress as ex:

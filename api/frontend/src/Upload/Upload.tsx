@@ -4,7 +4,9 @@ import Dropzone, { ImageFile } from 'react-dropzone';
 import { upload, getFileInfo, importAddressBook } from './actions';
 import { AddressBook, CsvTable } from 'CsvTable';
 
-type UploadProps = {};
+type UploadProps = {
+    onUploadComplete: () => void,
+};
 
 type FileInfo = {
     sampleData: Array<AddressBook>,
@@ -167,7 +169,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
             this.state.uploadedFile,
             this.state.fileInfo.encoding || 'utf-8',
             this.state.fileInfo.delimiter || ' ',
-            this.state.fileInfo.hasHeader || true,
+            this.state.fileInfo.hasHeader || false,
             this.state.fileInfo.quotechar || '',
             this.state.resolveConflicts,
             (result: any) => {
@@ -175,7 +177,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                     ...this.state,
                     confirmLoading: false,
                     modalOpen: false,
-                });
+                },            this.props.onUploadComplete);
             },
             (err: any) => {
                 this.setState({
@@ -197,7 +199,6 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                     <Button className="upload" onClick={this.onOpen} color="facebook"> 
                         <Icon name="upload" /> Upload
                     </Button>}
-                dimmer="blurring"
                 style={{marginTop: '120px !important', margin: '120px auto'}}
                 onClose={this.onClose}
                 open={this.state.modalOpen}
@@ -215,10 +216,9 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                         <Dropzone className="drop-zone"
                             onDrop={this.onDrop}
                             style={{width: '100%'}}
-                            maxSize={5242880} // 5MB
+                            maxSize={1048576} // 1MB
                             multiple={false}
                             disablePreview
-                            accept="text/plain, text/csv"
                         >
                             <div>Click or Drop your CSV file here</div>
                             {this.state.showProgress &&
@@ -264,7 +264,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                                 <Form.Select fluid required label="When inserting data that already exists in system"
                                     options={[
                                         {'key': 0, text: 'Keep the data in the system', value: 'keep_existing'},
-                                        {'key': 1, text: 'Replace with new data in CSV', value: 'use_new'},
+                                        {'key': 1, text: 'Replace with new data in CSV', value: 'replace_with_new'},
                                     ]}
                                     value={this.state.resolveConflicts}
                                     onChange={this.onConflictsResolveStrategyChange}
@@ -273,7 +273,14 @@ export class Upload extends React.Component<UploadProps, UploadState> {
                             <Form.Group widths="equal">
                                 <Form.Field style={{width: '100%'}}>
                                     <label>Preview</label>
-                                    <CsvTable addressBooks={this.state.fileInfo.sampleData}/>
+                                    <CsvTable
+                                        preview
+                                        addressBooks={this.state.fileInfo.sampleData}
+                                        totalPages={1}
+                                        currentPage={0}
+                                        pageSize={5}
+                                        goToPage={(p) => null}
+                                    />
                                 </Form.Field>
                             </Form.Group>
                         </Form>

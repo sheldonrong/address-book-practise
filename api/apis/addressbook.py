@@ -36,7 +36,7 @@ class AddressBookList(Resource):
     @api.expect(pagination_params, validate=True)
     @api.marshal_list_with(address_book)
     def get(self):
-        params = self.csv_params.parse_args()
+        params = self.pagination_params.parse_args()
         keyword = params.get('keyword', None)
         page = params.get('page', self.DEFAULT_PAGE)
         size = params.get('size', self.DEFAULT_PAGE_SIZE)
@@ -95,3 +95,17 @@ class AddressBookBulkImport(Resource):
         except FileNotFoundError:
             raise BadRequest('Could not locate file using the provided file hash.')
         return True
+
+
+@api.route('/metadata/<page_size>')
+class AddressBookMetadata(Resource):
+
+    metadata = api.model('AddressBookMetadata', {
+        'total_pages': fields.Integer(required=True),
+    })
+
+    @api.marshal_with(metadata)
+    def get(self, page_size):
+        return {
+            'total_pages': AddressBookService.get_total_pages(int(page_size))
+        }

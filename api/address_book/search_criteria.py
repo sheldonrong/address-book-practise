@@ -38,6 +38,6 @@ class SearchCriteria(object):
         return address_book.order_by(sort_by if sort_dir == 'asc' else desc(sort_by))
 
     def _build_pagination(self, address_book):
-        page_size = self.__criteria.get('page_size', self.DEFAULT_PAGE_SIZE)
-        page = self.__criteria.get('page', self.DEFAULT_PAGE)
+        page_size = self.__criteria['page_size'] or self.DEFAULT_PAGE_SIZE
+        page = self.__criteria['page'] or self.DEFAULT_PAGE
         return address_book.limit(page_size).offset(page * page_size)

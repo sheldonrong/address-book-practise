@@ -4,7 +4,7 @@ from enum import Enum
 class ConflictsResolveStrategy(Enum):
 
     KEEP_EXISTING = 'keep_existing'
-    USE_NEW = 'use_new'
+    REPLACE_WITH_NEW = 'replace_with_new'
 
     def __repr__(self):
         return str(self.value)
