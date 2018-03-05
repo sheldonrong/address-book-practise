@@ -5,7 +5,7 @@ from address_book.model import db
 class Config(object):
     ALLOWED_EXTENSIONS = {'txt', 'csv'}
     STATIC_FOLDER = 'frontend/static'
-    STATIC_URL_PATH = '/frontend/static'
+    STATIC_URL_PATH = '/static'
     UPLOAD_FOLDER = ''
     POSTGRES = {
         'user': 'postgres',
@@ -28,7 +28,7 @@ class DevConfig(Config):
 class ProdConfig(Config):
     DEBUG = False
     STATIC_FOLDER = 'frontend/build/static'
-    STATIC_URL_PATH = '/frontend/build/static'
+    STATIC_URL_PATH = '/static'
     UPLOAD_FOLDER = '/tmp'
 
 
