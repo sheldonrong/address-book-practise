@@ -40,11 +40,7 @@ class CSVHandler(object):
         return self.data
 
     def get_info(self):
-        # if no encoding is specified, we will guess it first
-        if not self.encoding:
-            with open(self.filepath, mode='rb') as csvfile:
-                sample = csvfile.read(self.CSV_SAMPLE_SIZE)
-                self.encoding = chardet.detect(sample)['encoding']
+        self._guess_encoding()
 
         with open(self.filepath, mode='rt', encoding=self.encoding) as csvfile:
             reader, has_header = self._get_reader(csvfile)
@@ -109,10 +105,18 @@ class CSVHandler(object):
             except InvalidEmailAddress as e:
                 app.logger.info(e)
 
+    def _guess_encoding(self):
+        # if no encoding is specified, we will guess it first
+        if not self.encoding:
+            with open(self.filepath, mode='rb') as csvfile:
+                sample = csvfile.read(self.CSV_SAMPLE_SIZE)
+                self.encoding = chardet.detect(sample)['encoding']
+
     @staticmethod
     def _guess_fieldnames(sample, delimiter):
         possible_fieldnames = []
         for row in sample.splitlines():
+            row = row.strip()
             if not row:
                 continue
             # it is possible there are invalid data in the samples
@@ -178,13 +182,12 @@ class AddressBook(db.Model):
         return AddressBook.query.filter(AddressBook.id == id)
 
     @staticmethod
-    def search(email=None, name=None, top=None, after=None):
+    def search(keyword=None, page=None, page_size=None):
         from address_book.search_criteria import SearchCriteria
         return SearchCriteria(db, {
-            'email': email,
-            'name': name,
-            'top': top,
-            'after': after
+            'keyword': keyword,
+            'page': page,
+            'page_size': page_size,
         }).search()
 
     @classmethod
@@ -209,4 +212,3 @@ class AddressBook(db.Model):
                 db.session.commit()
         db.session.commit()
         return True
-

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Container } from 'semantic-ui-react';
 import { CsvTableComponent } from './CsvTable';
 import { Upload } from './Upload';
 import 'semantic-ui/dist/semantic.css';
@@ -16,7 +17,9 @@ export class App extends React.Component {
         <div>
           <Upload />
         </div>
-        <CsvTableComponent />
+        <Container>
+          <CsvTableComponent />
+        </Container>
       </div>
     );
   }

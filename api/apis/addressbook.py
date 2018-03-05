@@ -1,12 +1,16 @@
 import os
 
-from flask.ext.restplus import Namespace, Resource, fields
+from flask_restplus import Namespace, Resource, fields
 from flask import current_app as app
 from flask import request
+from werkzeug.exceptions import BadRequest
+
 from address_book.service import AddressBookService
 from address_book.model import CSVHandler
-from apis.utils import get_csv_metadata_fields
-from werkzeug.exceptions import BadRequest
+from apis.utils import (
+    get_csv_metadata_fields,
+    get_pagination_params
+)
 
 api = Namespace(
     'address-books',
@@ -14,19 +18,29 @@ api = Namespace(
     path='/address_book'
 )
 
-address_book = api.model('AddressBook', {
-    'id': fields.Integer(required=True),
-    'name': fields.String(),
-    'email': fields.String()
-})
-
 
 @api.route('/')
 class AddressBookList(Resource):
 
+    DEFAULT_PAGE = 0
+    DEFAULT_PAGE_SIZE = 50
+
+    address_book = api.model('AddressBook', {
+        'id': fields.Integer(required=True),
+        'name': fields.String(),
+        'email': fields.String()
+    })
+
+    pagination_params = get_pagination_params()
+
+    @api.expect(pagination_params, validate=True)
     @api.marshal_list_with(address_book)
     def get(self):
-        return AddressBookService.search()
+        params = self.csv_params.parse_args()
+        keyword = params.get('keyword', None)
+        page = params.get('page', self.DEFAULT_PAGE)
+        size = params.get('size', self.DEFAULT_PAGE_SIZE)
+        return AddressBookService.search(keyword, page, size)
 
 
 @api.route('/import')
@@ -64,6 +78,7 @@ class AddressBookBulkImport(Resource):
         save the information in the uploaded CSV file into db
         """
         params = request.get_json()
+        metadata = params['metadata']
         try:
             handler = CSVHandler(os.path.join(
                 os.path.dirname(__file__),
@@ -71,22 +86,12 @@ class AddressBookBulkImport(Resource):
                 app.config['UPLOAD_FOLDER'],
                 params['file_hash'],
             ),
-                has_header=params['metadata']['has_header'],
-                delimiter=params['metadata']['delimiter'],
-                quotechar=params['metadata']['quotechar'],
-                encoding=params['metadata']['encoding']
+                has_header=metadata['has_header'],
+                delimiter=metadata['delimiter'],
+                quotechar=metadata['quotechar'],
+                encoding=metadata['encoding']
             )
             AddressBookService.import_data(handler, params['resolve_conflicts'])
         except FileNotFoundError:
             raise BadRequest('Could not locate file using the provided file hash.')
         return True
-
-
-@api.route('/<id>', endpoint='address-book')
-@api.param('id', 'the address book id')
-@api.response(404, 'Address book not found')
-class AddressBook(Resource):
-
-    @api.marshal_with(address_book)
-    def get(self, id):
-        return AddressBookService.get(id)

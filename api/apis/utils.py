@@ -1,5 +1,12 @@
-from flask.ext.restplus import fields
-from flask_restplus import reqparse
+from flask_restplus import reqparse, fields
+
+
+def get_pagination_params():
+    parser = reqparse.RequestParser()
+    parser.add_argument('keyword', type=str, help='keyword to search for')
+    parser.add_argument('page', type=int, help='page to start from')
+    parser.add_argument('size', type=int, help='how many to retrieve each page')
+    return parser
 
 
 def get_csv_metadata_fields(required=False):
@@ -14,6 +21,7 @@ def get_csv_metadata_fields(required=False):
             description='quote char used in CSV file',
             enum=[" ", "\"", "\'"]
         ),
+        # TODO: this library does not handle boolean well, using Integer for now as workaround
         'has_header': fields.Integer(
             required=required,
             description='is the first row a header row?',

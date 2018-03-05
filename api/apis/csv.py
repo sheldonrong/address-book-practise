@@ -1,12 +1,13 @@
 import os
-from flask.ext.restplus import Resource, Namespace, fields
 from flask import current_app as app
+from flask_restplus import Resource, Namespace, fields
 from werkzeug.exceptions import BadRequest
 
-from address_book.exceptions import CannotDetermineCSVMappingError
-from apis.addressbook import address_book
-from apis.utils import get_csv_metadata_fields, get_csv_metadata_params
 from address_book.model import CSVHandler
+from address_book.exceptions import CannotDetermineCSVMappingError
+from apis.addressbook import AddressBookList
+from apis.utils import get_csv_metadata_fields, get_csv_metadata_params
+
 
 api = Namespace(
     'csv',
@@ -24,7 +25,7 @@ class CSV(Resource):
         'CSVReturnValues',
         dict(get_csv_metadata_fields(required=True), **{
             'sample_data': fields.List(
-                fields.Nested(address_book),
+                fields.Nested(AddressBookList.address_book),
                 required=True,
                 description='returned sample data',
             ),

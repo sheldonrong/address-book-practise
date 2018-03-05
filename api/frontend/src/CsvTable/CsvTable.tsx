@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, Label, Menu, Icon } from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import { getAddressBooks } from './actions';
 
 export type AddressBook = {
@@ -15,9 +15,10 @@ export type CsvTableProps = {
 
 export const CsvTable: React.StatelessComponent<CsvTableProps> = (props: CsvTableProps) => {
     return (
-        <Table celled>
+        <Table celled sortable>
             <Table.Header>
                 <Table.Row>
+                    <Table.HeaderCell>ID</Table.HeaderCell>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Email</Table.HeaderCell>
                 </Table.Row>
@@ -27,6 +28,7 @@ export const CsvTable: React.StatelessComponent<CsvTableProps> = (props: CsvTabl
                 {props.addressBooks && props.addressBooks.map(
                     (addressBook: AddressBook, index: number) => {
                         return (<Table.Row key={index}>
+                            <Table.Cell>{addressBook.id}</Table.Cell>
                             <Table.Cell>{addressBook.name}</Table.Cell>
                             <Table.Cell>{addressBook.email}</Table.Cell>
                         </Table.Row>);

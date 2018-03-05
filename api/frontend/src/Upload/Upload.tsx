@@ -64,32 +64,37 @@ export class Upload extends React.Component<UploadProps, UploadState> {
     }
 
     getFileInfo = () => {
-        getFileInfo(this.state.uploadedFile, 
-                    (r: any) => {
-                this.setState({
-                    ...this.state,
-                    hasError: false,
-                    errorMessage: '',
-                    fileInfo: {
-                        sampleData: r.body.sample_data,
-                        delimiter: r.body.delimiter,
-                        encoding: r.body.encoding,
-                        hasHeader: r.body.has_header,
-                        quotechar: r.body.quotechar
-                    }
-                    });
-                },
-                    (e: any) => {
+        getFileInfo(
+            this.state.uploadedFile, 
+            (r: any) => {
+            this.setState({
+                ...this.state,
+                hasError: false,
+                errorMessage: '',
+                fileInfo: {
+                    sampleData: r.body.sample_data,
+                    delimiter: r.body.delimiter,
+                    encoding: r.body.encoding,
+                    hasHeader: r.body.has_header,
+                    quotechar: r.body.quotechar
+                }
+                });
+            },
+            (e: any) => {
                 this.setState({
                     ...this.state,
                     hasError: true,
-                    errorMessage: e.response.body.message
+                    errorMessage: e.response.body.message,
+                    fileInfo: {
+                        ...this.state.fileInfo,
+                        sampleData: [],
+                    }
                 });
             },
-                    this.state.fileInfo.encoding,
-                    this.state.fileInfo.delimiter,
-                    this.state.fileInfo.hasHeader,
-                    this.state.fileInfo.quotechar,
+            this.state.fileInfo.encoding,
+            this.state.fileInfo.delimiter,
+            this.state.fileInfo.hasHeader,
+            this.state.fileInfo.quotechar,
         );
     }
 
@@ -189,7 +194,7 @@ export class Upload extends React.Component<UploadProps, UploadState> {
         return (
             <Modal
                 trigger={
-                    <Button className="upload" onClick={this.onOpen} floated="right" color="facebook"> 
+                    <Button className="upload" onClick={this.onOpen} color="facebook"> 
                         <Icon name="upload" /> Upload
                     </Button>}
                 dimmer="blurring"

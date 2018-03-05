@@ -5,12 +5,8 @@ from constants import ConflictsResolveStrategy
 class AddressBookService(object):
 
     @staticmethod
-    def search(email=None, name=None, top=None, after=None):
-        return AddressBook.search(email, name, top, after)
-
-    @staticmethod
-    def get(id_):
-        return AddressBook.get_by_id(id_)
+    def search(keyword, page, page_size):
+        return AddressBook.search(keyword, page, page_size)
 
     @staticmethod
     def import_data(csv_handler, resolve_conflicts=ConflictsResolveStrategy.KEEP_EXISTING):
