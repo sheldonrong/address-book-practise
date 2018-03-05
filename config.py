@@ -29,7 +29,7 @@ class ProdConfig(Config):
     DEBUG = False
     STATIC_FOLDER = 'frontend/build/static'
     STATIC_URL_PATH = '/static'
-    UPLOAD_FOLDER = '/tmp'
+    UPLOAD_FOLDER = '/var/tmp'
 
 
 def setup_app(app, config):
