@@ -21,6 +21,9 @@ db = SQLAlchemy()
 
 
 class CSVHandler(object):
+    """
+    CSV handler that helps to parse strings into tabular data structure.
+    """
 
     CSV_SAMPLE_SIZE = 512
     CSV_DELIMITER_LIST = (' ', ',', ':', '|', ';')
@@ -35,6 +38,11 @@ class CSVHandler(object):
         self.data = []
 
     def get_data(self):
+        """open the temp file according to path, read and return a list of address book objects
+
+        Returns:
+            list of Address Book object
+        """
         self._validate_file_info()
 
         with open(self.filepath, mode='rt', encoding=self.encoding) as csvfile:
@@ -43,6 +51,22 @@ class CSVHandler(object):
         return self.data
 
     def get_info(self):
+        """
+        Read a sample of the temp file, guess the metadata information using both Python's
+        CSV sniffer and the chardet library.
+
+        Returns:
+            dict: a dict with meta information:
+                encoding (str): the encoding of the file, i.e. utf-8, ascii, etc;
+                delimiter (str): delimiter of the records, i.e. colon(:), space( ), comma(,), etc;
+                quotechar (str): quote character that is used around each cell data
+                sample_data (list of AddressBook): a preview of the data parsed using the above
+                    metadata. this helps to give user an feeling of whether they chose the correct
+                    metadata to parse the file or not.
+
+        Raises:
+            UnicodeError: if cannot parse the file using the encoding selected.
+        """
         self._guess_encoding()
 
         with open(self.filepath, mode='rt', encoding=self.encoding) as csvfile:
@@ -99,14 +123,11 @@ class CSVHandler(object):
             # if there is header, skip it
             next(reader, None)
         for row in reader:
-            try:
-                self.data.append(AddressBook(
-                    id=None,
-                    email=row['email'].strip(),
-                    name=row['name'].strip(),
-                ))
-            except InvalidEmailAddress as e:
-                app.logger.info(e)
+            self.data.append(AddressBook(
+                id=None,
+                email=row['email'].strip(),
+                name=row['name'].strip(),
+            ))
 
     def _guess_encoding(self):
         # if no encoding is specified, we will guess it first
@@ -175,21 +196,27 @@ class AddressBook(db.Model):
     def __hash__(self):
         return hash((self.id, self.name, self.email))
 
-    @classmethod
-    def _validate(cls, email):
-        if not re.search(cls.EMAIL_REGEX, email):
-            raise InvalidEmailAddress(email)
-
-    @staticmethod
-    def get_by_id(id):
-        return AddressBook.query.filter(AddressBook.id == id)
-
     @staticmethod
     def get_total_pages(page_size):
+        """
+        retrieve the number of pages it will have provided by the page_size.
+
+        Args:
+            page_size (int)
+
+        Returns:
+            int: number of pages
+        """
         return ceil(db.session.execute(func.count(AddressBook.id)).scalar() / page_size)
 
     @staticmethod
     def search(keyword=None, page=None, page_size=None):
+        """
+        general search functionality, that search for keyword and return paginated data.
+
+        Returns:
+            list of AddressBook instances: a list of objects satisfying the search criteria.
+        """
         from address_book.search_criteria import SearchCriteria
         return SearchCriteria(db, {
             'keyword': keyword,
@@ -199,6 +226,23 @@ class AddressBook(db.Model):
 
     @classmethod
     def bulk_insert_addressbooks(cls, address_books, table, on_duplicate):
+        """
+        Given a list of AddressBook instances, insert the data into database.
+
+        When `on_duplicate` is set to ConflictsResolveStrategy.KEEP_EXISTING, any new
+        address_books instances that has email already in the database will be skipped, whereas
+        when `on_duplicate` is set to ConflictsResolveStrategy.REPLACE_WITH_NEW, it will
+        replace the data in db with the one from the new objects.
+
+        Args:
+            address_books (list of AddressBook instances): a list of objects to be inserted
+            table (SQLAlchemy.Table): the target table object
+            on_duplicate (ConflictsResolveStrategy): one of the two strategy
+
+        Returns:
+            bool: indicating everything went fine.
+                  program will continue when encountering errors, and only error info will be logged.
+        """
         for i, row in enumerate(address_books):
             try:
                 cls._validate(row.email)
@@ -219,3 +263,8 @@ class AddressBook(db.Model):
                 db.session.commit()
         db.session.commit()
         return True
+
+    @classmethod
+    def _validate(cls, email):
+        if not re.search(cls.EMAIL_REGEX, email):
+            raise InvalidEmailAddress(email)

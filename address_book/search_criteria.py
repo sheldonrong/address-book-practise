@@ -4,6 +4,10 @@ from address_book.model import AddressBook
 
 
 class SearchCriteria(object):
+    """
+    The SearchCriteria class helps build modular SQLAlchemy objects
+    for advanced database queries.
+    """
 
     DEFAULT_PAGE = 0
     DEFAULT_PAGE_SIZE = 50
@@ -13,6 +17,7 @@ class SearchCriteria(object):
         self.__criteria = criteria or {}
 
     def search(self):
+        """construct search sql and execute to return a list of data"""
         address_book = self.db.session.query(AddressBook)
         for criterion in self.__criteria.keys():
             build_func = getattr(self, 'build_' + criterion, None)

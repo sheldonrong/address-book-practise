@@ -1,12 +1,12 @@
 # Address Book Manager - Back end
 
-For setting up front end of this demo, please check the [\[Front End Readme\]](./frontend/)
+[For details about how front end is built, please check the [\[Front End Readme\]](./frontend/)]
 
 Flask application with Open API (Swagger) standard compatible RESTful API.
 
 ### Before moving on, a bit about Google App Engine
 
-First of all, I have to say `gcloud app deploy` really takes a lot of time. (still prefer IaaS over PaaS :P)
+First of all, I have to say `gcloud app deploy` really takes a lot of time. (and it seems a lot of people are not happy :) )
 
 Then there is a second issue I managed to solve, and it was caused by non-other than autoscaling.
 
@@ -24,7 +24,7 @@ Now obviously, this means there is a design flaw here, and to solve this, files 
 server, and in Google's case, the Google Cloud Storage, which would then need to use the SDK to connect.
 However, due to limited time, I decided to go the other approach: remove one of the instance.
 
-Hopefully, this doesn't make you mad :)
+With this in mind, here are the details.
 
 ### Demo
 
@@ -33,7 +33,9 @@ This application has been deployed to Google App Engine at:
 
 ### Installing
 
-It's Python, no need for installation!
+Create a new Python 3.5 virtualenv, and activate the env and run `pip install -r requirements.txt`.
+
+For Google App Engine deployment, see the `app.yaml` file.
 
 ### Deployment
 
