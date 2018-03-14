@@ -15,32 +15,35 @@ Flask application with Open API (Swagger) standard compatible RESTful API.
     * The framework of the CSV file lacks a strict business layer (the architecture has one layer in the resourceful API and one layer in the DB ORM, but lacks the layer that is tied to business logic). Considered that the currently only two columns are used in CSV and the only business logic here is to validate the email address, I opt-out the business layer, and instead uses a CSVHandler class to handle everything. But this approach is not scalable and will be problematic when there are many columns in the CSV files and requires extensive validation check against cells. A better approach is to do declarative design. A typical business model would look like:
 ```
 class StringField(Field):
-	type_ = str
+    type_ = str
 
 class EmailField(StringField):
-	max_length = MAXLENGTH_EMAIL_ADDRESS
-	validator = EmailValidator
+    max_length = MAXLENGTH_EMAIL_ADDRESS
+    validator = EmailValidator
 
-	def validate(self, row)
-		self.validator(row.email).validate()
+    def validate(self, row)
+	self.validator(row.email).validate()
 
 class Row(metaclass=sheet.RowMeta):
+
+    storage = AddressBook
+
     name = sheet.StringField(max_length=64, required=True)
     email = sheet.EmailField(required=True)
 
-	def validate(...):
-		for fname, field in self.fields:
-			field.validate(...)
+    def validate(...):
+	for fname, field in self.fields:
+	    field.validate(...)
 ```
 The other thing can I can do better is to seperate out the dialect and properties of CSV handing (encoding, has_header, quotechar, etc) into a configuration class, say:
 ```
 class CSVOptions:
-	has_header = False
-	quotechar = '"'
-	delimiter = ' '
+    has_header = False
+    quotechar = '"'
+    delimiter = ' '
 	
-	def __init__(self, has_header, quotechar, delimiter):
-	    ...
+    def __init__(self, has_header, quotechar, delimiter):
+        ...
 ```
 then when we are handling CSV, pass this object, instead of dictionaries into it. The objective in the end is to separate this part of the logic from the CSVHandler class, so all the checking is done here and CSVHandler simply responsible for reading CSV files.
 
